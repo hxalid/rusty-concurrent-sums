@@ -7,4 +7,5 @@
 //! using different approaches and crates.
 
 pub mod concurrent_sum_crossbeam;
+pub mod concurrent_sum_rayon;
 pub mod concurrent_sum_std;
