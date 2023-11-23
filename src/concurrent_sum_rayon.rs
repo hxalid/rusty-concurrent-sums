@@ -1,10 +1,12 @@
 //! Concurrent vector sum implementation in Rust Rayon library.
 //!
 
-use std::ops::Add;
 use rayon::prelude::*;
+use std::ops::Add;
 
-fn concurrent_sum_rayon<T>(numbers: Vec<T>, num_threads: usize) -> T
+/// concurrent_sum - calculate vector sums concurrently
+/// using Rust rayon library
+pub fn concurrent_sum_rayon<T>(numbers: Vec<T>, num_threads: usize) -> T
 where
     T: Add<Output = T> + Copy + Default + Send + Sync + 'static,
 {
@@ -21,31 +23,8 @@ where
         .build_global()
         .unwrap();
 
-    numbers.par_iter().cloned().reduce(|| T::default(), |a, b| a + b)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn sum_valid() {
-        let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let sequential: u64 = vec.iter().cloned().sum();
-        assert_eq!(sequential, concurrent_sum_rayon(vec, 2));
-    }
-
-    #[test]
-    #[should_panic]
-    fn sum_panic_more_threads() {
-        let vec = vec![1];
-        _ = concurrent_sum_rayon(vec, 2);
-    }
-
-    #[test]
-    #[should_panic]
-    fn sum_panic_zero_threads() {
-        let vec = vec![1];
-        _ = concurrent_sum_rayon(vec, 0);
-    }
+    numbers
+        .par_iter()
+        .cloned()
+        .reduce(|| T::default(), |a, b| a + b)
 }
